@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:intro_ticket/base/show_custom_navbar.dart';
+import 'package:intro_ticket/data/api/api_client.dart';
 import 'package:intro_ticket/models/point.dart';
 import 'package:intro_ticket/utils/colors.dart';
 import 'package:intro_ticket/utils/dimensions.dart';
@@ -23,22 +24,28 @@ class SearchTravelPages extends StatefulWidget {
 
 class _SearchTravelPagesState extends State<SearchTravelPages> {
     DateTime _selectedDate = DateTime.now();
-    var point = <PointInfo>[];
+    bool _loading = false;
+    var points= <Point>[];
 
     late String queryOrigin = "";
     late String queryDestination;
+    var origin;
+    var destination;
 
-    late String texte = "yaounde";
     var originController = TextEditingController();
     var arriveController = TextEditingController();
     var dateController = TextEditingController();
-    dynamic data;
 
       @override
-  void initState() {
-    // _getOrigin();
-    super.initState();
-  }
+    void initState() {
+      _getOrigin();
+      super.initState();
+    }
+
+    @override
+      dispose() {
+        super.dispose();
+      }
 
 
 
@@ -65,36 +72,32 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
 
   }
 
-  void  _pickOrigin() {
 
-      if( texte != null) {
-        setState(() {
-          queryOrigin = texte;
-          print(queryOrigin);
-        });
-      } else {
-        print("erreur");
+    void  _getOrigin() async {
 
-      }
-    
-  }
-
-  //  void  _getOrigin() async {
-  //     final String _url = "http://192.168.100.233/api/v1/point/all";
-  //       print(_url);
-  //     return await http.get(
-  //       Uri.parse(_url)
-       
-  //     ).then((response) {
-  //         var result = json.decode(response.body);
-  //         setState(() {
-  //           result = this.data;
-  //           print( result );
-  //         });
-  //       }).catchError((err) {
-  //         print(err);
-  //       });
-  //   }
+       await ApiClient().getPoint("users").then((response){
+         _loading = true;
+          setState(() {
+            Iterable list = json.decode(response.body);
+            points= list.map((model)=>Point.fromJson(model)).toList();
+          }
+          // List data = json.decode(response.body);
+            // if (kDebugMode) {
+            //   print(data.length);
+            // }
+            //   setState(() {
+            //       data.forEach((element) {
+            //       var point = element;
+            //       var name = point['name'];
+            //       print(name);
+            //     });
+            //   }
+            //);
+        );
+      }).catchError((error) { 
+        print(error);
+      });
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -238,48 +241,49 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                         barrierDismissible: true,
                         // textConfirm: "Confirm",
                         // textCancel: "Cancel",
-                        content: data== null 
+                        content: points.length == null
                         ?
                         Text("Aucune ville disponible", textAlign: TextAlign.center,)
                         :
                         Expanded(
-                          flex: 1,
-                          child: ListView.builder(
-                            itemCount: data['point'].length,
+                          child: ListView.separated (
+                            itemCount: (points == null )? 0 : points.length,
                             itemBuilder: (context, index) {
-                              return ListTile(
+                              return points.length == 0 ? CircularProgressIndicator() 
+                              : 
+                              ListTile(
                                 title: GestureDetector(
                                   onTap: () {
-                                    _pickOrigin();
-                        
+                                    if(  points[index].name != "") {
+                                      setState(() {
+                                        queryOrigin =  points[index].name;
+                                        print(queryOrigin);
+                                      });
+                                    } else {
+                                      print("erreur");
+                                    }
                                   },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: Container(
-                                      width: largeur,
-                                      height: 40,
-                                      padding: EdgeInsets.all(Dimensions.height10/2),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(Dimensions.radius15),
-                                        border: Border.all(
-                                          width: 1,
-                                          color: AppColors.mainColor,
-                                        )
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: 
+                                      [
+                                        BigText(
+                                        text: points[index].name,
                                       ),
-                                      child: Text(
-                                      texte, 
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: AppColors.mainBlackColor
-                                        ),
+                                        SmallText(
+                                        text: points[index].name,
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ),
                               );
-                            }
+                            }, separatorBuilder: (BuildContext context, int index) { 
+                              return Divider(thickness: 1, color: Colors.deepOrange, height: 2);
+                            },
                           ),
-                        )
+                        ),
+                        
                         // Column(
                         //   children: [
                         //     for(int i = 0; i <= 8 ; i++)
@@ -288,11 +292,10 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                         // )
                       
                       );
-      
                     },
                     child: AppTextField(
                       textController: originController, 
-                      hintText: texte == queryOrigin ? queryOrigin : "Ville de depart", 
+                      hintText: originController == queryOrigin ? queryOrigin : "Ville depart", 
                       widget: IconButton(
                         icon: Icon(Icons.home),
                         color: AppColors.mainColor,
