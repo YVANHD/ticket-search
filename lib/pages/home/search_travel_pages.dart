@@ -1,16 +1,20 @@
- import 'dart:convert';
+ import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:intro_ticket/base/show_custom_navbar.dart';
 import 'package:intro_ticket/data/api/api_client.dart';
 import 'package:intro_ticket/models/point.dart';
+import 'package:intro_ticket/routes/route_helper.dart';
 import 'package:intro_ticket/utils/colors.dart';
 import 'package:intro_ticket/utils/dimensions.dart';
 import 'package:intro_ticket/widget/app_icon.dart';
 import 'package:intro_ticket/widget/app_text_field.dart';
 import 'package:intro_ticket/widget/big_text.dart';
+import 'package:intro_ticket/widget/custom_field.dart';
 import 'package:intro_ticket/widget/small_text.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,34 +32,31 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
     var points= <Point>[];
 
     late String queryOrigin = "";
-    late String queryDestination;
-    var origin;
-    var destination;
+    late String queryDestination = '';
 
-    var originController = TextEditingController();
-    var arriveController = TextEditingController();
     var dateController = TextEditingController();
 
-      @override
+
+    @override
     void initState() {
       _getOrigin();
       super.initState();
     }
 
-    @override
+      @override
       dispose() {
         super.dispose();
       }
 
 
 
-  _getDatePicker(BuildContext context) async {
+  void _getDatePicker(BuildContext context) async {
 
     final initialDate = DateTime.now();
 
     DateTime? _pickerDate = await showDatePicker(
       context: context, 
-      initialDate: initialDate, 
+      initialDate: initialDate,
       firstDate: DateTime(initialDate.year - 10), 
       lastDate: DateTime(initialDate.year + 10),
     );
@@ -73,9 +74,9 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
   }
 
 
-    void  _getOrigin() async {
+    void _getOrigin() async {
 
-       await ApiClient().getPoint("users").then((response){
+       await ApiClient().getPoint("all").then((response){
          _loading = true;
           setState(() {
             Iterable list = json.decode(response.body);
@@ -102,30 +103,28 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
   @override
   Widget build(BuildContext context) {
 
-
     final largeur = MediaQuery.of(context).size.width;
 
+    void _search() {
+        // _timer = Timer.periodic(
+        //   Duration(seconds: 2), 
+        //   (Timer timer) {
+        //     setState(() {
+        //       timer.cancel();
+        //       StandBye();
+        //     });
+        //   }
+        // );
 
-  void _search() {
-
-      String depart = originController.text.trim();
-      String arrive = arriveController.text.trim();
-      String date = dateController.text.trim();
-
-
-
-      if(depart.isEmpty) {
-        showCustomSnackbar("Selectionner une ville de depart", title: "Depart");
-      } else if(arrive.isEmpty) {
-        showCustomSnackbar("Selectionner une ville d'arrivée", title: "Arrivée");
-      } else if(date.isEmpty) {
-        showCustomSnackbar("Selectionner une date", title: "Date depart");
-      }else {
-        showCustomSnackbar("Tout est parfait", title: "Parfait");
-      }
-  }
-
-
+        if (queryOrigin .isEmpty) {
+          showCustomSnackbar("Selectionnez la ville de depart", title: "Message");
+        } else if(queryDestination .isEmpty) {
+          showCustomSnackbar("Selectionnez la ville d'arrivée", title: "Message");
+        } else {
+          showCustomSnackbar("Vous recherchez un trajet entre de $queryOrigin et $queryDestination, le $_selectedDate", title: "Message");
+        }
+        //Get.toNamed(RouteHelper.reservation);
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -214,7 +213,8 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                         ],
                       ),
                       onTap: () {
-                        _search();
+                         
+                         _search();
                       },
                       
                     ),
@@ -222,7 +222,7 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: Dimensions.height20),
             Container(
               padding: EdgeInsets.symmetric(horizontal: Dimensions.width20),
               width: largeur,
@@ -233,13 +233,14 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
               ),
               child: Column(
                 children: [
-                  SizedBox(height: 10),
+                  SmallText(text: "Depart", textAlign: TextAlign.center, color: Colors.black,),
+                  SizedBox(height: Dimensions.height10),
                   GestureDetector(
                     onTap: () {
                       Get.defaultDialog(
                         title: "Sélectionner une ville",
                         barrierDismissible: true,
-                        // textConfirm: "Confirm",
+                        textConfirm: "continue",
                         // textCancel: "Cancel",
                         content: points.length == null
                         ?
@@ -254,25 +255,25 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                               ListTile(
                                 title: GestureDetector(
                                   onTap: () {
-                                    if(  points[index].name != "") {
+                                    if(  points[index].town != "") {
                                       setState(() {
-                                        queryOrigin =  points[index].name;
+                                        queryOrigin =  points[index].town;
                                         print(queryOrigin);
                                       });
                                     } else {
                                       print("erreur");
                                     }
                                   },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: 
-                                      [
+                                    [
                                         BigText(
-                                        text: points[index].name,
+                                        text: "${points[index].town}",
                                       ),
                                         SmallText(
-                                        text: points[index].name,
+                                        text: "${points[index].address}",
                                       ),
                                     ],
                                   ),
@@ -283,19 +284,10 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                             },
                           ),
                         ),
-                        
-                        // Column(
-                        //   children: [
-                        //     for(int i = 0; i <= 8 ; i++)
-
-                        //   ],
-                        // )
-                      
                       );
                     },
-                    child: AppTextField(
-                      textController: originController, 
-                      hintText: originController == queryOrigin ? queryOrigin : "Ville depart", 
+                    child: CustomField(
+                      hintText: queryOrigin, 
                       widget: IconButton(
                         icon: Icon(Icons.home),
                         color: AppColors.mainColor,
@@ -305,16 +297,62 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: Dimensions.height10),
+                  SmallText(text: "Arrivée", textAlign: TextAlign.center, color: Colors.black,),
+                  SizedBox(height: Dimensions.height10),
                   GestureDetector(
                     onTap: () {
-                     Get.defaultDialog(
-                        title: "Obtenir la liste des villes",
+                      Get.defaultDialog(
+                        title: "Sélectionner une ville",
+                        barrierDismissible: true,
+                        textConfirm: "continue",
+                        // textCancel: "Cancel",
+                        content: points.length == null
+                        ?
+                        Text("Aucune ville disponible", textAlign: TextAlign.center,)
+                        :
+                        Expanded(
+                          child: ListView.separated (
+                            itemCount: (points == null )? 0 : points.length,
+                            itemBuilder: (context, index) {
+                              return points.length == 0 ? CircularProgressIndicator() 
+                              : 
+                              ListTile(
+                                title: GestureDetector(
+                                  onTap: () {
+                                    if(  points[index].town != "") {
+                                      setState(() {
+                                        queryDestination =  points[index].town;
+                                        print(queryDestination);
+                                      });
+                                    } else {
+                                      print("erreur");
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: 
+                                    [
+                                        BigText(
+                                        text: "${points[index].town}",
+                                      ),
+                                        SmallText(
+                                        text: "${points[index].address}",
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }, separatorBuilder: (BuildContext context, int index) { 
+                              return Divider(thickness: 1, color: Colors.deepOrange, height: 2);
+                            },
+                          ),
+                        ),
                       );
                     },
-                    child: AppTextField(
-                      textController: arriveController, 
-                      hintText: "Ville arrivée", 
+                    child: CustomField(
+                      hintText: queryDestination, 
                       widget: IconButton(
                         icon: Icon(Icons.home),
                         color: AppColors.mainColor,
@@ -324,7 +362,9 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: Dimensions.height10),
+                  SmallText(text: "Date", textAlign: TextAlign.center, color: Colors.black,),
+                  SizedBox(height: Dimensions.height10),
                   GestureDetector(
                     onTap: () {
                        _getDatePicker(context);
@@ -342,6 +382,7 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                       ),
                     ),
                   ),
+                  SizedBox(height: Dimensions.height10),
                 ],
               ),
             ),
@@ -595,4 +636,17 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
     );
 }
 
-
+  
+  Widget StandBye() {
+    return Container(
+      child: SpinKitThreeBounce(
+        itemBuilder: (BuildContext context, int index) {
+          return DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: index.isEven ? Color(0xFFC5565C) : Colors.grey,
+            ),
+          );
+        }),
+      );
+  }

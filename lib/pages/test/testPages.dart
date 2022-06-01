@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:intro_ticket/data/api/api_client.dart';
 import 'package:intro_ticket/models/point.dart';
 import 'package:intro_ticket/widget/big_text.dart';
-import 'package:intro_ticket/widget/small_text.dart';
 
 
 class TestPages extends StatefulWidget {
@@ -25,7 +24,7 @@ class _TestPagesState extends State<TestPages> {
 
     @override
     void initState() {
-      _getOrigin();
+     //  _getOrigin();
       super.initState();
     }
 
@@ -37,7 +36,7 @@ class _TestPagesState extends State<TestPages> {
 
     void  _getOrigin() async {
 
-       await ApiClient().getPoint("users").then((response){
+       await ApiClient().getPoint("all").then((response){
          _loading = true;
           setState(() {
             // List data = json.decode(response.body);
@@ -149,7 +148,7 @@ class _TestPagesState extends State<TestPages> {
 
         return Scaffold(
       appBar: AppBar(
-        title: Text(points == null ? 'en cours de chargement ...' : 'Utilisateurs'),
+        title: Text(points == null ? 'en cours de chargement ...' : 'Ticket'),
       ),
       body: ListView.separated (
           itemCount: (points == null )? 0 : points.length,
@@ -161,11 +160,11 @@ class _TestPagesState extends State<TestPages> {
                 children: 
                   [
                     BigText(
-                    text: points[index].name,
+                    text: points[index].town,
                   ),
-                    SmallText(
-                    text: points[index].name,
-                  ),
+                  //   SmallText(
+                  //   text: points[index].address,
+                  // ),
                 ],
               ),
             );

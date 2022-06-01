@@ -10,120 +10,88 @@ String pointToJson(List<Point> data) => json.encode(List<dynamic>.from(data.map(
 
 class Point {
     Point({
-        required this.id,
         required this.name,
-        required this.username,
-        required this.email,
+        required this.region,
+        required this.town,
         required this.address,
-        required this.phone,
-        required this.website,
-        required this.company,
+        required this.firstPhone,
+        required this.secondPhone,
+        required this.fix,
+        required this.email,
+        required this.agence,
     });
 
-    int id;
     String name;
-    String username;
+    String region;
+    String town;
+    String address;
+    String firstPhone;
+    String secondPhone;
+    String fix;
     String email;
-    Address address;
-    String phone;
-    String website;
-    Company company;
+    Agence agence;
 
     factory Point.fromJson(Map<String, dynamic> json) => Point(
-        id: json["id"],
         name: json["name"],
-        username: json["username"],
+        region: json["region"],
+        town: json["town"],
+        address: json["address"],
+        firstPhone: json["first_phone"],
+        secondPhone: json["second_phone"],
+        fix: json["fix"],
         email: json["email"],
-        address: Address.fromJson(json["address"]),
-        phone: json["phone"],
-        website: json["website"],
-        company: Company.fromJson(json["company"]),
+        agence: Agence.fromJson(json["agence"]),
     );
 
     Map<String, dynamic> toJson() => {
-        "id": id,
         "name": name,
-        "username": username,
+        "region": region,
+        "town": town,
+        "address": address,
+        "first_phone": firstPhone,
+        "second_phone": secondPhone,
+        "fix": fix,
         "email": email,
-        "address": address.toJson(),
-        "phone": phone,
-        "website": website,
-        "company": company.toJson(),
+        "agence": agence.toJson(),
     };
 }
 
-class Address {
-    Address({
-        required this.street,
-        required this.suite,
-        required this.city,
-        required this.zipcode,
-        required this.geo,
-    });
-
-    String street;
-    String suite;
-    String city;
-    String zipcode;
-    Geo geo;
-
-    factory Address.fromJson(Map<String, dynamic> json) => Address(
-        street: json["street"],
-        suite: json["suite"],
-        city: json["city"],
-        zipcode: json["zipcode"],
-        geo: Geo.fromJson(json["geo"]),
-    );
-
-    Map<String, dynamic> toJson() => {
-        "street": street,
-        "suite": suite,
-        "city": city,
-        "zipcode": zipcode,
-        "geo": geo.toJson(),
-    };
-}
-
-class Geo {
-    Geo({
-        required this.lat,
-        required this.lng,
-    });
-
-    String lat;
-    String lng;
-
-    factory Geo.fromJson(Map<String, dynamic> json) => Geo(
-        lat: json["lat"],
-        lng: json["lng"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "lat": lat,
-        "lng": lng,
-    };
-}
-
-class Company {
-    Company({
+class Agence {
+    Agence({
         required this.name,
-        required this.catchPhrase,
-        required this.bs,
+        required this.headOffice,
+        required this.postBox,
+        required this.firstPhone,
+        required this.secondPhone,
+        required this.fix,
+        required this.website,
     });
 
     String name;
-    String catchPhrase;
-    String bs;
+    String headOffice;
+    String postBox;
+    String firstPhone;
+    String secondPhone;
+    String fix;
+    String website;
 
-    factory Company.fromJson(Map<String, dynamic> json) => Company(
+    factory Agence.fromJson(Map<String, dynamic> json) => Agence(
         name: json["name"],
-        catchPhrase: json["catchPhrase"],
-        bs: json["bs"],
+        headOffice: json["head_office"],
+        postBox: json["post_box"],
+        firstPhone: json["first_phone"],
+        secondPhone: json["second_phone"],
+        fix: json["fix"],
+        website: json["website"],
     );
 
     Map<String, dynamic> toJson() => {
         "name": name,
-        "catchPhrase": catchPhrase,
-        "bs": bs,
+        "head_office": headOffice,
+        "post_box": postBox,
+        "first_phone": firstPhone,
+        "second_phone": secondPhone,
+        "fix": fix,
+        "website": website,
     };
 }

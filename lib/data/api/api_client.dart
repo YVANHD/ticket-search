@@ -6,7 +6,8 @@ class ApiClient extends GetConnect implements GetxService {
   // late String token;
   // final String appBaseUrl;
   // late Map<String, String> _headers;
-  final String _url = "https://jsonplaceholder.typicode.com/";
+  final String _urlr = "https://jsonplaceholder.typicode.com/";
+  final String _url = "http://192.168.100.233/api/v1/point/";
 
   // ApiClient({required this.appBaseUrl, required shared_preferences}) {
   //   baseUrl = appBaseUrl;
@@ -45,6 +46,13 @@ class ApiClient extends GetConnect implements GetxService {
 
   getPoint(apiUrl) async {
     var fullUrl = _url + apiUrl;
+    return await http.get(
+      Uri.parse(fullUrl),
+    );
+  }
+
+    getResult(apiUrl) async {
+    var fullUrl = _urlr + apiUrl;
     return await http.get(
       Uri.parse(fullUrl),
     );

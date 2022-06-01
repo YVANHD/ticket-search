@@ -42,6 +42,7 @@ dependencies:
   google_maps_flutter:
   geocoding:
   geolocator:
+  flutter_spinkit:
 
 dev_dependencies:
   flutter_test:

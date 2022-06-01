@@ -6,12 +6,14 @@ class SmallText extends StatelessWidget {
   final String text;
   double size;
   double height;
+  TextAlign? textAlign;
   SmallText({
     Key? key, 
     this.color = AppColors.textColor,
     required this.text,
     this.size = 12,
-    this.height = 1.2
+    this.height = 1.2,
+    this.textAlign
 
   }) : super(key: key);
 
