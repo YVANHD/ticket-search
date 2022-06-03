@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:intro_ticket/pages/home/search_travel_pages.dart';
+import 'package:intro_ticket/pages/places/search_places.dart';
 import 'package:intro_ticket/pages/test/testPages.dart';
 import 'package:intro_ticket/utils/colors.dart';
 
@@ -17,9 +18,7 @@ class _HomePageState extends State<HomePage> {
 List pages = [
   SearchTravelPages(),
   TestPages(),
-  Container(
-    child: Center(child: Text("Next pages")),
-  ),
+  SearchPlaces(),
   Container(
     child: Center(child: Text("Next next pages")),
   ),

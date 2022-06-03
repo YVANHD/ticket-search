@@ -7,13 +7,15 @@ class BigText extends StatelessWidget {
   final String text;
   double size;
   TextOverflow overFlow;
+  TextAlign? textAlign;
   
   BigText({
     Key? key, 
     this.color = AppColors.mainBlackColor,
     required this.text,
     this.size = 0,
-    this.overFlow = TextOverflow.ellipsis
+    this.overFlow = TextOverflow.ellipsis,
+    this.textAlign
 
   }) : super(key: key);
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,6 +10,7 @@ class ApiClient extends GetConnect implements GetxService {
   // late Map<String, String> _headers;
   final String _urlr = "https://jsonplaceholder.typicode.com/";
   final String _url = "http://192.168.100.233/api/v1/point/";
+  final String _urlresearch = "http://192.168.100.233/api/v1/";
 
   // ApiClient({required this.appBaseUrl, required shared_preferences}) {
   //   baseUrl = appBaseUrl;
@@ -55,6 +58,16 @@ class ApiClient extends GetConnect implements GetxService {
     var fullUrl = _urlr + apiUrl;
     return await http.get(
       Uri.parse(fullUrl),
+    );
+  }
+
+  research(data, apiUrl) async {
+    var fullUrl = _urlresearch + apiUrl;
+
+    return await http.post(
+        Uri.parse(fullUrl),
+        body: jsonEncode(data),
+        // headers: _setHeaders()
     );
   }
 }

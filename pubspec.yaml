@@ -43,6 +43,7 @@ dependencies:
   geocoding:
   geolocator:
   flutter_spinkit:
+  dropdown_search:
 
 dev_dependencies:
   flutter_test:

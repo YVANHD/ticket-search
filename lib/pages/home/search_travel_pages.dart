@@ -1,6 +1,7 @@
  import 'dart:async';
 import 'dart:convert';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,7 @@ import 'package:intro_ticket/widget/big_text.dart';
 import 'package:intro_ticket/widget/custom_field.dart';
 import 'package:intro_ticket/widget/small_text.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class SearchTravelPages extends StatefulWidget {
@@ -37,16 +39,96 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
     var dateController = TextEditingController();
 
 
+    
     @override
     void initState() {
+        _loading = false;
       _getOrigin();
       super.initState();
     }
 
-      @override
-      dispose() {
-        super.dispose();
-      }
+    void _getOrigin() async {
+
+       await ApiClient().getPoint("all").then((response){
+         _loading = true;
+          setState(() {
+            Iterable list = json.decode(response.body);
+            print(list);
+            points= list.map((model)=>Point.fromJson(model)).toList();
+          }
+          // List data = json.decode(response.body);
+            // if (kDebugMode) {
+            //   print(data.length);
+            // }
+            //   setState(() {
+            //       data.forEach((element) {
+            //       var point = element;
+            //       var name = point['name'];
+            //       print(name);
+            //     });
+            //   }
+            //);
+        );
+      }).catchError((error) { 
+        print(error);
+      });
+    }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+    
+    getResult() async {
+       setState(() {
+          _loading = true;
+        });
+
+      var data = {
+        'start_point': '$queryOrigin', 
+        'end_point': '$_loading',
+        'date': dateController.text,
+        'nature': 'child',
+        'passenger': 1
+      };
+
+      
+        if (queryOrigin .isEmpty) {
+          showCustomSnackbar("Selectionnez la ville de depart", title: "Message");
+        } else if(queryDestination .isEmpty) {
+          showCustomSnackbar("Selectionnez la ville d'arrivée", title: "Message");
+        } else {
+          var response = await ApiClient().research(data, 'departure/research');
+          print(response);
+          if(response.statusCode == 200 ) {
+            var body = json.decode(response.body);
+            print(body);
+            _loading = false;
+
+            // if(body["status"] == true) {
+            //   SharedPreferences localStorage = await SharedPreferences.getInstance();
+            //   localStorage.setString("departure", queryOrigin);
+            //   localStorage.setString("arrival", queryDestination);
+            //   // localStorage.containsKey("date", _selectedDate);
+            //   showCustomSnackbar("Vous recherchez un trajet entre de $queryOrigin et $queryDestination, le $_selectedDate", title: "Message");
+            //     setState(() {
+            //     Get.toNamed(RouteHelper.reservation);
+            //     });
+            // } else {
+            //   showCustomSnackbar("Aucun voyage pour cette recherche", title: "Message");
+            // }
+
+            setState(() {
+              _loading = false;
+            });
+
+          }
+        }
+        
+
+    }
 
 
 
@@ -74,59 +156,30 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
   }
 
 
-    void _getOrigin() async {
-
-       await ApiClient().getPoint("all").then((response){
-         _loading = true;
-          setState(() {
-            Iterable list = json.decode(response.body);
-            points= list.map((model)=>Point.fromJson(model)).toList();
-          }
-          // List data = json.decode(response.body);
-            // if (kDebugMode) {
-            //   print(data.length);
-            // }
-            //   setState(() {
-            //       data.forEach((element) {
-            //       var point = element;
-            //       var name = point['name'];
-            //       print(name);
-            //     });
-            //   }
-            //);
-        );
-      }).catchError((error) { 
-        print(error);
-      });
-    }
-
   @override
   Widget build(BuildContext context) {
 
     final largeur = MediaQuery.of(context).size.width;
 
-    void _search() {
-        // _timer = Timer.periodic(
-        //   Duration(seconds: 2), 
-        //   (Timer timer) {
-        //     setState(() {
-        //       timer.cancel();
-        //       StandBye();
-        //     });
-        //   }
-        // );
 
-        if (queryOrigin .isEmpty) {
-          showCustomSnackbar("Selectionnez la ville de depart", title: "Message");
-        } else if(queryDestination .isEmpty) {
-          showCustomSnackbar("Selectionnez la ville d'arrivée", title: "Message");
-        } else {
-          showCustomSnackbar("Vous recherchez un trajet entre de $queryOrigin et $queryDestination, le $_selectedDate", title: "Message");
-        }
-        //Get.toNamed(RouteHelper.reservation);
-    }
-
-    return Scaffold(
+    return 
+    // _loading
+    //         ?
+    //         Center(
+    //           child: Container(
+    //             child: SpinKitThreeBounce(
+    //               itemBuilder: (BuildContext context, int index) {
+    //                 return DecoratedBox(
+    //                   decoration: BoxDecoration(
+    //                     borderRadius: BorderRadius.circular(15),
+    //                     color: index.isEven ? Color(0xFFC5565C) : Colors.grey,
+    //                   ),
+    //                 );
+    //               }),
+    //             ),
+    //         )
+    //         :
+            Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -213,8 +266,7 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                         ],
                       ),
                       onTap: () {
-                         
-                         _search();
+                         getResult();
                       },
                       
                     ),
@@ -226,144 +278,59 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: Dimensions.width20),
               width: largeur,
-              height: 250,
+              height: 280,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(Dimensions.radius30),
                 // color: Colors.orange,
               ),
               child: Column(
                 children: [
-                  SmallText(text: "Depart", textAlign: TextAlign.center, color: Colors.black,),
                   SizedBox(height: Dimensions.height10),
-                  GestureDetector(
-                    onTap: () {
-                      Get.defaultDialog(
-                        title: "Sélectionner une ville",
-                        barrierDismissible: true,
-                        textConfirm: "continue",
-                        // textCancel: "Cancel",
-                        content: points.length == null
-                        ?
-                        Text("Aucune ville disponible", textAlign: TextAlign.center,)
-                        :
-                        Expanded(
-                          child: ListView.separated (
-                            itemCount: (points == null )? 0 : points.length,
-                            itemBuilder: (context, index) {
-                              return points.length == 0 ? CircularProgressIndicator() 
-                              : 
-                              ListTile(
-                                title: GestureDetector(
-                                  onTap: () {
-                                    if(  points[index].town != "") {
-                                      setState(() {
-                                        queryOrigin =  points[index].town;
-                                        print(queryOrigin);
-                                      });
-                                    } else {
-                                      print("erreur");
-                                    }
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: 
-                                    [
-                                        BigText(
-                                        text: "${points[index].town}",
-                                      ),
-                                        SmallText(
-                                        text: "${points[index].address}",
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }, separatorBuilder: (BuildContext context, int index) { 
-                              return Divider(thickness: 1, color: Colors.deepOrange, height: 2);
-                            },
-                          ),
+                 SizedBox(
+                    width: 300,
+                    child: DropdownSearch<String>(
+                        items:  List.generate(points.length, (index){
+                          var obj = points[index];
+                          return obj.town;
+                        }),
+                        autoValidateMode: AutovalidateMode.onUserInteraction,
+                        dropdownSearchDecoration: InputDecoration(
+                            labelText: "Départ",
+                            hintText: "choisir une ville",
+                            filled: true,
+                            fillColor:
+                                Theme.of(context).inputDecorationTheme.fillColor,
+                            border: InputBorder.none
+
                         ),
-                      );
-                    },
-                    child: CustomField(
-                      hintText: queryOrigin, 
-                      widget: IconButton(
-                        icon: Icon(Icons.home),
-                        color: AppColors.mainColor,
-                        onPressed: () {
+                        onChanged: print,
+                        selectedItem: queryOrigin,
                           
-                        },
-                      ),
-                    ),
+                    )
                   ),
-                  SizedBox(height: Dimensions.height10),
-                  SmallText(text: "Arrivée", textAlign: TextAlign.center, color: Colors.black,),
-                  SizedBox(height: Dimensions.height10),
-                  GestureDetector(
-                    onTap: () {
-                      Get.defaultDialog(
-                        title: "Sélectionner une ville",
-                        barrierDismissible: true,
-                        textConfirm: "continue",
-                        // textCancel: "Cancel",
-                        content: points.length == null
-                        ?
-                        Text("Aucune ville disponible", textAlign: TextAlign.center,)
-                        :
-                        Expanded(
-                          child: ListView.separated (
-                            itemCount: (points == null )? 0 : points.length,
-                            itemBuilder: (context, index) {
-                              return points.length == 0 ? CircularProgressIndicator() 
-                              : 
-                              ListTile(
-                                title: GestureDetector(
-                                  onTap: () {
-                                    if(  points[index].town != "") {
-                                      setState(() {
-                                        queryDestination =  points[index].town;
-                                        print(queryDestination);
-                                      });
-                                    } else {
-                                      print("erreur");
-                                    }
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: 
-                                    [
-                                        BigText(
-                                        text: "${points[index].town}",
-                                      ),
-                                        SmallText(
-                                        text: "${points[index].address}",
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }, separatorBuilder: (BuildContext context, int index) { 
-                              return Divider(thickness: 1, color: Colors.deepOrange, height: 2);
-                            },
-                          ),
+                  SizedBox(height: Dimensions.height20),
+                  SizedBox(
+                    width: 300,
+                    child: DropdownSearch<String>(
+                        items:  List.generate(points.length, (index){
+                          var obj = points[index];
+                          return obj.town;
+                        }),
+                        autoValidateMode: AutovalidateMode.onUserInteraction,
+                        dropdownSearchDecoration: InputDecoration(
+                            labelText: "Arrivée",
+                            hintText: "choisir une ville",
+                            filled: true,
+                            fillColor:
+                                Theme.of(context).inputDecorationTheme.fillColor,
+                            border: InputBorder.none
+
                         ),
-                      );
-                    },
-                    child: CustomField(
-                      hintText: queryDestination, 
-                      widget: IconButton(
-                        icon: Icon(Icons.home),
-                        color: AppColors.mainColor,
-                        onPressed: () {
+                        onChanged: print,
+                        selectedItem: queryDestination,
                           
-                        },
-                      ),
-                    ),
+                    )
                   ),
-                  SizedBox(height: Dimensions.height10),
-                  SmallText(text: "Date", textAlign: TextAlign.center, color: Colors.black,),
                   SizedBox(height: Dimensions.height10),
                   GestureDetector(
                     onTap: () {
@@ -382,7 +349,7 @@ class _SearchTravelPagesState extends State<SearchTravelPages> {
                       ),
                     ),
                   ),
-                  SizedBox(height: Dimensions.height10),
+                  SizedBox(height: Dimensions.height20),
                 ],
               ),
             ),

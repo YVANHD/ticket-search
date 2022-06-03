@@ -9,7 +9,9 @@ import 'package:get/get.dart';
 import 'package:intro_ticket/base/show_custom_navbar.dart';
 import 'package:intro_ticket/data/api/api_client.dart';
 import 'package:intro_ticket/models/users.dart';
+import 'package:intro_ticket/pages/places/search_places.dart';
 import 'package:intro_ticket/utils/colors.dart';
+import 'package:intro_ticket/utils/dimensions.dart';
 import 'package:intro_ticket/widget/app_icon.dart';
 import 'package:intro_ticket/widget/item_reservation.dart';
 import 'package:intro_ticket/widget/small_text.dart';
@@ -32,13 +34,8 @@ class _ReservationTravelPagesState extends State<ReservationTravelPages> {
   void initState() {
     _getResult();
     super.initState();
-    _loading = false;
+     _loading = false;
   }
-
-      @override
-      dispose() {
-        super.dispose();
-      }
 
       void  _getResult() async {
         setState(() {
@@ -46,8 +43,19 @@ class _ReservationTravelPagesState extends State<ReservationTravelPages> {
         });
 
        await ApiClient().getResult("users").then((response){
-         _loading = true;
-          setState(() {
+            if(response.statusCode == 200 ) {
+              Iterable list = json.decode(response.body);
+              print(list);
+              _loading = false;
+              users= list.map((model)=>User.fromJson(model)).toList();
+               setState(() {
+                  _loading = false;
+                });
+            } else {
+              showCustomSnackbar("veuillez patienter ...", title: "message");
+            }
+           
+         // setState(() {
             // List data = json.decode(response.body);
             // if (kDebugMode) {
             //   print(data.length);
@@ -60,23 +68,14 @@ class _ReservationTravelPagesState extends State<ReservationTravelPages> {
             //     });
             //   }
             //);
-
-            if(response.statusCode == 200 ) {
-              Iterable list = json.decode(response.body);
-              print(list);
-              _loading = false;
-              users= list.map((model)=>User.fromJson(model)).toList();
-            } else {
-              showCustomSnackbar("un probleme est survenu", title: "message");
-              setState(() {
-                _loading = false;
-              });
-            }
-          }
-        );
+          //}
+        //);
       }).catchError((error) { 
         print(error);
       });
+       setState(() {
+          _loading = false;
+        });
     }
 
   @override
@@ -85,23 +84,7 @@ class _ReservationTravelPagesState extends State<ReservationTravelPages> {
     final largeur = MediaQuery.of(context).size.width;
     final longueur = MediaQuery.of(context).size.height;
 
-    return _loading 
-      ?
-      Center(
-        child: Container(
-          child: SpinKitThreeBounce(
-            itemBuilder: (BuildContext context, int index) {
-              return DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: index.isEven ? Color(0xFFC5565C) : Colors.grey,
-                ),
-              );
-            }),
-          ),
-      )
-      :
-     Scaffold(
+    return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -123,25 +106,25 @@ class _ReservationTravelPagesState extends State<ReservationTravelPages> {
                 ),
                     Expanded(child: Container()),
                     Text(
-                      "YDE",
+                      "Yaounde",
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 25,
+                          fontSize: Dimensions.font20,
                           fontWeight: FontWeight.bold
                       ),
                     ),
-                    SizedBox(width: 10,),
+                    SizedBox(width: Dimensions.width10,),
                     Icon(
                       Icons.swap_horiz,
                       color: Colors.white,
-                      size: 25,
+                      size: Dimensions.iconSize24,
                     ),
-                    SizedBox(width: 10),
+                    SizedBox(width: Dimensions.width10),
                     Text(
-                      "DLA",
+                      "Douala",
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 25,
+                          fontSize: Dimensions.font20,
                           fontWeight: FontWeight.bold
                       ),
                     ),
@@ -154,13 +137,13 @@ class _ReservationTravelPagesState extends State<ReservationTravelPages> {
                     )
                   ],
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: Dimensions.height15),
 
                 Text(
                   "10 Mars 2022",
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
+                      fontSize: Dimensions.font20,
                       fontWeight: FontWeight.bold
                   ),
                 ),
@@ -170,7 +153,7 @@ class _ReservationTravelPagesState extends State<ReservationTravelPages> {
               preferredSize: Size.fromHeight(50),
               child: Container(
                 color: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: Dimensions.height20, vertical: Dimensions.width10),
                 // decoration: BoxDecoration(
                 //   color: Colors.white,
                 //   borderRadius: BorderRadius.only(
@@ -221,19 +204,34 @@ class _ReservationTravelPagesState extends State<ReservationTravelPages> {
 
        SliverList(
           delegate: SliverChildBuilderDelegate(
-            childCount: users.length  == null ? 0 : users.length ,
+            childCount: users.length ,
             (BuildContext context, int index) {
-              return ItemReservation(
-                agency: users[index].name,
-                villeDepart: "7",
-                villeArrivee: "6",
-                image: "assets/images/car2.png",
-                onTap: () {},
-                price: users[index].address.suite,
-                title1: users[index].address.geo.lng,
-                title2: users[index].address.geo.lat,
-                arrival: "2",
-                depart: "1",
+              var user = users[index];
+              return _loading ?
+              Container(
+                alignment: Alignment.topCenter,
+                margin: EdgeInsets.only(top: 20),
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.grey,
+                  color: AppColors.mainColor,
+                )
+              )
+              :
+              GestureDetector(
+                onTap: () {
+                  Get.to(SearchPlaces());
+                },
+                child: ItemReservation(
+                  agency: user.name,
+                  villeDepart: "7",
+                  villeArrivee: "6",
+                  image: "assets/images/car2.png",
+                  price: user.address.suite,
+                  title1: user.address.geo.lng,
+                  title2: user.address.geo.lat,
+                  arrival: "2",
+                  depart: "1",
+                ),
               );
             },
           ),
