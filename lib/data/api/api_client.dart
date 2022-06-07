@@ -66,7 +66,7 @@ class ApiClient extends GetConnect implements GetxService {
 
     return await http.post(
         Uri.parse(fullUrl),
-        body: jsonEncode(data),
+        body: data,
         // headers: _setHeaders()
     );
   }

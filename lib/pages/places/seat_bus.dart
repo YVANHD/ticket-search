@@ -4,7 +4,7 @@ import 'package:intro_ticket/utils/colors.dart';
 
 
 class SeatBus extends StatefulWidget {
-  final TravelModel? travel;
+  final Travel? travel;
 
   const SeatBus({
     Key? key, this.travel,

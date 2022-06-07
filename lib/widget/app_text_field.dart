@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class AppTextField extends StatelessWidget {
-  final TextEditingController textController;
+  final TextEditingController? textController;
   final String hintText;
   //final IconData icon;
   bool isObscure;
   final Widget? widget;
   AppTextField({Key? key,
 
-      required this.textController,
+      this.textController,
       required this.hintText,
       //required this.icon,
       this.isObscure=false,

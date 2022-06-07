@@ -1,7 +1,6 @@
 
 import 'package:get/get.dart';
 import 'package:intro_ticket/data/repository/point_repo.dart';
-import 'package:intro_ticket/models/point.dart';
 
 class PointController extends GetxController {
   final PointRepository pointRepo;
