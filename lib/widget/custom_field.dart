@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class CustomField extends StatelessWidget {
   final String hintText;
-  //final IconData icon;
+  final IconData icon;
   bool isObscure;
   final Widget? widget;
   CustomField({Key? key,
 
       required this.hintText,
-      //required this.icon,
+      required this.icon,
       this.isObscure=false,
       this.widget
     }) : super(key: key);
@@ -16,11 +16,10 @@ class CustomField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      
       margin:const EdgeInsets.only(left: 20, right: 20),
       decoration: BoxDecoration(
-          color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(15),
+          color: Colors.white10,
+          borderRadius: BorderRadius.circular(10),
           boxShadow: const [
              BoxShadow(
               color: Colors.grey,
@@ -47,8 +46,8 @@ class CustomField extends StatelessWidget {
             //hintText,
             hintText: hintText,
             // prefixIcon
-            // prefixIcon: Icon(icon, color:Color(0xFFC5565C) ),
-            prefixIcon: widget == null? Container(): Container(child: widget,),
+            prefixIcon: Icon(icon, color:Color(0xFFC5565C) ),
+             //prefixIcon: widget == null? Container(): Container(child: widget,),
             //focusedBorder
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),

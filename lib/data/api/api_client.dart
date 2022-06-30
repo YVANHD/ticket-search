@@ -9,8 +9,8 @@ class ApiClient extends GetConnect implements GetxService {
   // final String appBaseUrl;
   // late Map<String, String> _headers;
   final String _urlr = "https://jsonplaceholder.typicode.com/";
-  final String _url = "http://192.168.100.233/api/v1/point/";
-  final String _urlresearch = "http://192.168.100.233/api/v1/";
+  final String _url = "http://192.168.100.179/api/v1/point/";
+  final String _urlresearch = "http://192.168.100.179/api/v1/";
 
   // ApiClient({required this.appBaseUrl, required shared_preferences}) {
   //   baseUrl = appBaseUrl;

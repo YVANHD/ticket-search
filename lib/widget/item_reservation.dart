@@ -39,16 +39,21 @@ class ItemReservation extends StatelessWidget {
     final largeur = MediaQuery.of(context).size.width;
     final longueur = MediaQuery.of(context).size.height;
 
-    return Padding(
+    return 
+    Padding(
     padding: EdgeInsets.only(left: Dimensions.width10, right: Dimensions.width10, top: Dimensions.height10),
-    child: Card(
-      margin: const EdgeInsets.all(5),
-      elevation: 10,
-      borderOnForeground: true,
-       color: color,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+        width: largeur,
+        height: 120,
+        margin: EdgeInsets.only(right: Dimensions.width10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Dimensions.radius30),
+          color: color
+        ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -63,20 +68,18 @@ class ItemReservation extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: Dimensions.height10),
+         // SizedBox(height: Dimensions.height10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  for(int i = 0; i<2; i++)
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: SmallText(text: title1)
-                  ),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: SmallText(text: title2,)
                   ),
                 ],
               ),

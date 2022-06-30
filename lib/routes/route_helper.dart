@@ -19,8 +19,8 @@ class RouteHelper {
   static List<GetPage>  routes = [
     GetPage(name: splashPage, page: () => SplashScreen()),
     GetPage(name: initial, page: () => HomePage()),
-    GetPage(name: reservation, page: () => ReservationTravelPages(), transition: Transition.circularReveal ),
-     GetPage(name: details, page: () => const SearchPlaces(), transition: Transition.fadeIn ),
+   // GetPage(name: reservation, page: () => ReservationTravelPages()),
+     //GetPage(name: details, page: () => const SearchPlaces()),
 
   ];
 }

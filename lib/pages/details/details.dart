@@ -1,21 +1,20 @@
-// ignore_for_file: prefer_const_declarations
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intro_ticket/pages/places/search_places.dart';
 import 'package:intro_ticket/utils/colors.dart';
 import 'package:intro_ticket/utils/dimensions.dart';
 import 'package:intro_ticket/widget/app_icon.dart';
 import 'package:intro_ticket/widget/big_text.dart';
 import 'package:intro_ticket/widget/custom_field.dart';
 
+import '../../models/travel_model.dart';
 
-class TestPages extends StatelessWidget {
-   TestPages({Key? key}) : super(key: key);
-      
+class Details extends StatelessWidget {
+   Details({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+      var data = Get.arguments;
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
@@ -28,7 +27,7 @@ class TestPages extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: (){
-                   
+                   Get.back();
                   },
                   child: AppIcon(icon: Icons.clear)
                 ),
@@ -56,7 +55,7 @@ class TestPages extends StatelessWidget {
                 ),
                 child: Center(
                   child: BigText(
-                    text: "title", 
+                    text: "Details", 
                     size: Dimensions.font26
                   )
                 ),
@@ -64,7 +63,7 @@ class TestPages extends StatelessWidget {
             ),
             pinned: true,
             // backgroundColor: Colors.transparent,
-            expandedHeight: 200,
+            expandedHeight: 250,
             flexibleSpace: FlexibleSpaceBar(
               background: Image.asset(
                 "assets/images/car.png",
@@ -84,12 +83,14 @@ class TestPages extends StatelessWidget {
                 CustomField(hintText: "Douala - Boloko", icon: Icons.car_crash,),
                  SizedBox(height: Dimensions.height10),
                 CustomField(hintText: "16 Juin 2022", icon: Icons.date_range),
-                 SizedBox(height: Dimensions.height10),
-                CustomField(hintText: "15h 30", icon: Icons.hourglass_empty,),
+                SizedBox(height: Dimensions.height10),
+                CustomField(hintText: data['heure'], icon: Icons.hourglass_empty,),
                 SizedBox(height: Dimensions.height10),
                 CustomField(hintText: "1 Personne", icon: Icons.person),
                 SizedBox(height: Dimensions.height10),
-                CustomField(hintText: "VIP", icon: Icons.class_,),
+                CustomField(hintText: data['prix'], icon: Icons.class_,),
+                 SizedBox(height: Dimensions.height10),
+                CustomField(hintText: data['places'], icon: Icons.class_,),
               ],
             ),
           )
@@ -99,13 +100,45 @@ class TestPages extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: EdgeInsets.symmetric(vertical: Dimensions.height10, horizontal: Dimensions.height10),
-            child: BigText(
-              text: "continuer", color: Colors.white,
-            ),
+            //height: Dimensions.bottomHeightBar,
+            padding: EdgeInsets.symmetric(vertical: Dimensions.width10, horizontal: Dimensions.height10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(Dimensions.radius20/2),
-              color: AppColors.mainColor
+              color: Colors.white10,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(Dimensions.radius20/2),
+                topRight: Radius.circular(Dimensions.radius20/2)
+              )
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                  InkWell(
+                    onTap: () {
+                      // love.loveCounter();
+                    },
+                    child: Center(
+                      child: AppIcon(
+                        icon: Icons.favorite_border,
+                        iconSize: Dimensions.iconSize16,
+                        iconColor: AppColors.mainColor
+                      )
+                    ),
+                  ),
+                 GestureDetector(
+                    onTap: () {
+                      Get.to(SearchPlaces(), arguments: data);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(15),
+                      child: BigText(text: "Continue",),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(Dimensions.radius20/2),
+                        color: AppColors.mainColor,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ],

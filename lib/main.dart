@@ -20,6 +20,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
+      defaultTransition: Transition.zoom,
+      transitionDuration: Duration(seconds: 1),
       initialRoute: RouteHelper.getSplashPage(),
       getPages: RouteHelper.routes,
     );

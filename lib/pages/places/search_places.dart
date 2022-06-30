@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intro_ticket/pages/places/seat_bus.dart';
 import 'package:intro_ticket/utils/colors.dart';
 import 'package:intro_ticket/utils/dimensions.dart';
 import 'package:intro_ticket/widget/app_icon.dart';
@@ -10,111 +9,204 @@ import 'package:intro_ticket/widget/big_text.dart';
 
 
 
-class SearchPlaces extends StatefulWidget {
+class SearchPlaces extends StatelessWidget {
 
-  const SearchPlaces({ Key? key }) : super(key: key);
-
-  @override
-  State<SearchPlaces> createState() => _SearchPlacesState();
-}
-
-class _SearchPlacesState extends State<SearchPlaces> {
+   SearchPlaces({ Key? key,}) : super(key: key);
+  
   
   @override
   Widget build(BuildContext context) {
     // final DetailsController love = Get.put(DetailsController());
+     final largeur = MediaQuery.of(context).size.width;
+      final longueur = MediaQuery.of(context).size.height;
+         var seats = int.parse( Get.arguments['places']);
+
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 5,
-        title: BigText(text: "Ticket", textAlign: TextAlign.center,),
-      backgroundColor: AppColors.bottonBackgrounColor,
-        leading:  GestureDetector(
-          onTap: (){
-            
-          },
-          child: AppIcon(icon: Icons.home, size: Dimensions.height10, iconColor: AppColors.iconColor2, )
-        )
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+             padding: EdgeInsets.only(top: 5),
+            child: Column(
+              children: [
+                Container(
+             width: largeur,
+             height: 80,
+             margin: EdgeInsets.only(left: Dimensions.width10, right: Dimensions.width10),
+             decoration: BoxDecoration(
+               borderRadius: BorderRadius.circular(20),
+               color: Colors.grey,
+             ),
+             child: Container(
+               padding: EdgeInsets.only(left: Dimensions.width10, right: Dimensions.width10),
+               child: Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                 children: [
+                   GestureDetector(
+                    onTap: () => Get.back(),
+                     child: Container(
+                       width: 50,
+                       height: 50,
+                       decoration: BoxDecoration(
+                         borderRadius: BorderRadius.circular(20),
+                         color: Colors.white,
+                       ),
+                       child: AppIcon(
+                         icon: Icons.clear,
+                         iconColor: Colors.black,
+                         backgroundColor: Colors.white,
+                       ),
+                                     ),
+                   ),
+                 BigText(text: "Trouver une place "),
+                   // const SizedBox(width: 10),
+                  Container(
+                     width: 50,
+                     height: 50,
+                     decoration: BoxDecoration(
+                       borderRadius: BorderRadius.circular(20),
+                       color: Colors.white,
+                     ),
+                     child: AppIcon(
+                       icon: Icons.shopping_cart_outlined,
+                       iconColor: Colors.black,
+                       backgroundColor: Colors.white,
+                     ),
+                  )
+                 ],
+               ),
+             ),
+           ),
+            SizedBox(height: Dimensions.height20),
+                SingleChildScrollView(
+                  child: Container(
+                    color:Colors.white,
+                    height: longueur*0.8,
+                    width: largeur*0.8,
+                    child: Stack(
+                      children: [
+                        Column(
+                          children: <Widget>[
+                            const Spacer(),
+                            Container(
+                              height: 80,
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(20)
+                                ),
+                                color: Colors.blue,
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                            const Spacer(flex: 1),
+                            Container(
+                              height: 80,
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(20)
+                                ),
+                                color: Colors.blue,
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                            const Spacer(),
+                          ],
+                        ),
+                        Container(
+                          margin: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(40),
+                            ),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 2,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(40),
+                            ),
+                            // child: GridView.count(
+                            //   crossAxisCount: 4,
+                            //   mainAxisSpacing: 0,
+                            //   crossAxisSpacing: 0,
+                            //   children: []
+                              // travel!.seats!
+                              //     .asMap()
+                              //     .map((index, element) {
+                              //   return MapEntry(
+                              //       index,
+                              //       InkWell(
+                              //         onTap: () {
+                              //           setState(() {
+                              //             seatSelected = index;
+                              //           });
+                              //         },
+                              //         child: Image.asset(
+                              //             'assets/images/seats/seat_3.jpg',
+                              //           width: 10,
+                              //         ),
+                              //       ),
+                              //   );
+                              // })
+                              //   .values.toList()
+                              child:  GridView.count(
+                                crossAxisCount: 4,
+                                mainAxisSpacing: 1,
+                                crossAxisSpacing: 0,
+                                padding: EdgeInsets.all(1),
+                                shrinkWrap: true,
+                                children: List.generate(seats, (index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: AssetImage("assets/images/seats/seat_2.png"),
+                                            fit: BoxFit.cover,
+                                          ),
+                                          borderRadius:
+                                          BorderRadius.all(Radius.circular(10),),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
+                            ),
+                          ),
+                        ],
+                    ),
+                    // Container(height: 10,),
+                    //   Container(
+                    //     padding: EdgeInsets.all(5),
+                    //     decoration: BoxDecoration(
+                    //       border: Border.all(
+                    //         color: Colors.blue.shade100,
+                    //         width: 2,
+                    //       ),
+                    //       borderRadius: BorderRadius.circular(5),
+                    //     ),
+                    //     child: Container(),
+                    //   )
 
-      ),
-      body: SizedBox(
-      child:Container(
-        padding: EdgeInsets.symmetric(horizontal: Dimensions.width20/2, vertical: Dimensions.height10/2),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _myInformationDestination(),
-            SizedBox(width: Dimensions.width10/2),
-            SeatBus()
-          ],
-        ),
-      ),
-    ),
+                  ),
+                ),
+              ],
+            )
+          ),
+
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Container(
-          //   decoration: BoxDecoration(
-          //     color: Colors.white,
-          //     borderRadius: BorderRadius.only(
-          //       topLeft: Radius.circular(20),
-          //       topRight: Radius.circular(20),
-          //     ),
-          //   ),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //     children: [
-          //       Container(
-          //         height: 30,
-          //         margin: EdgeInsets.symmetric(vertical: 10),
-          //         width: 50,
-          //         child: Material(
-          //           borderRadius: BorderRadius.circular(20.0),
-          //           shadowColor: Color.fromARGB(255, 30, 31, 30),
-          //           elevation: 7.0,
-          //           child: InkWell(
-          //             onTap: () {},
-          //             child: Center(
-          //               child: Icon(
-          //                 Icons.remove,
-          //                 size: 20,
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //       Text(
-          //         "\02" + " people",
-          //         style: TextStyle(
-          //           color: Colors.black,
-          //           fontSize: 15,
-          //           fontWeight: FontWeight.bold
-          //         ),
-          //       ),
-          //       Container(
-          //         height: 30,
-          //         margin: EdgeInsets.symmetric(vertical: 10),
-          //         width: 50,
-          //         child: Material(
-          //           borderRadius: BorderRadius.circular(20.0),
-          //           shadowColor: Color.fromARGB(255, 30, 31, 30),
-          //           elevation: 7.0,
-          //           child: InkWell(
-          //             onTap: () {},
-          //             child: Center(
-          //               child: Icon(
-          //                 Icons.add,
-          //                 size: 20,
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          
           BottomAppBar(
             notchMargin: 0,
             child: Container(
@@ -122,35 +214,18 @@ class _SearchPlacesState extends State<SearchPlaces> {
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      // love.loveCounter();
-                    },
-                    child: Center(
-                      child: AppIcon(
-                        icon: Icons.favorite_border,
-                        iconSize: Dimensions.iconSize16,
-                        iconColor: AppColors.mainColor
-                      )
-                    ),
+              child: GestureDetector(
+                onTap: () {
+                  
+                },
+                child: Container(
+                  padding: EdgeInsets.all(15),
+                  child: BigText(text: "Continue",),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(Dimensions.radius20),
+                    color: AppColors.mainColor,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(15),
-                      child: BigText(text: "Continue",),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(Dimensions.radius20),
-                        color: AppColors.mainColor,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -159,183 +234,5 @@ class _SearchPlacesState extends State<SearchPlaces> {
     );
   }
 
+
 }
-
-  _myInformationDestination() {
-    return SizedBox(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Origine \n",
-                  style: TextStyle(
-                    color: AppColors.mainColor,
-                    fontSize: Dimensions.font20/2
-                  ),
-                ),
-                TextSpan(
-                  text: "Yaoundé \n",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 0, 0, 0),
-                    fontSize: Dimensions.font20
-                  ),
-                ),
-                TextSpan(
-                  text: "Mvan \n",
-                  style: TextStyle(
-                    color: AppColors.mainColor,
-                    fontSize: Dimensions.font20/2
-                  ),
-                ),
-              ]
-            ),
-          ),
-          SizedBox(height: Dimensions.height10/2),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Destination \n",
-                  style: TextStyle(
-                   color: AppColors.mainColor,
-                    fontSize: Dimensions.font20/2
-                  ),
-                ),
-                TextSpan(
-                  text: "Douala \n",
-                  style: TextStyle(
-                    color: AppColors.mainBlackColor,
-                    fontSize: Dimensions.font20
-                  ),
-                ),
-                TextSpan(
-                  text: "Makepe \n",
-                  style: TextStyle(
-                    color: AppColors.mainColor,
-                    fontSize: Dimensions.font20/2
-                  ),
-                ),
-              ]
-            ),
-          ),
-          SizedBox(height: Dimensions.height10/2),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Horaire depart \n",
-                  style: TextStyle(
-                    color: AppColors.mainColor,
-                    fontSize: Dimensions.font20/2
-                  ),
-                ),
-                TextSpan(
-                  text: "09H 30 \n",
-                  style: TextStyle(
-                    color: AppColors.mainBlackColor,
-                    fontSize: Dimensions.font20
-                  ),
-                ),
-                // TextSpan(
-                //   text: "Makepe \n",
-                //   style: TextStyle(
-                //     color: Color.fromARGB(255, 0, 0, 0),
-                //     fontSize: 8
-                //   ),
-                // ),
-              ]
-            ),
-          ),
-          SizedBox(height: Dimensions.height10/2),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Horaire Destination \n",
-                  style: TextStyle(
-                    color: AppColors.mainColor,
-                    fontSize: Dimensions.font20/2
-                  ),
-                ),
-                TextSpan(
-                  text: "15H 30 \n",
-                  style: TextStyle(
-                    color: AppColors.mainBlackColor,
-                    fontSize: Dimensions.font20
-                  ),
-                ),
-                // TextSpan(
-                //   text: "Makepe \n",
-                //   style: TextStyle(
-                //     color: Color.fromARGB(255, 0, 0, 0),
-                //     fontSize: 8
-                //   ),
-                // ),
-              ]
-            ),
-          ),
-          SizedBox(height: Dimensions.height10/2),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Places \n",
-                  style: TextStyle(
-                   color: AppColors.mainColor,
-                    fontSize: Dimensions.font20/2
-                  ),
-                ),
-                TextSpan(
-                  text: "02 \n",
-                  style: TextStyle(
-                    color: AppColors.mainBlackColor,
-                    fontSize: Dimensions.font20
-                  ),
-                ),
-                // TextSpan(
-                //   text: "Makepe \n",
-                //   style: TextStyle(
-                //     color: Color.fromARGB(255, 0, 0, 0),
-                //     fontSize: 8
-                //   ),
-                // ),
-              ]
-            ),
-          ),
-          SizedBox(height: Dimensions.height10/2),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Numero \n",
-                  style: TextStyle(
-                    color: AppColors.mainColor,
-                    fontSize: Dimensions.font20/2
-                  ),
-                ),
-                TextSpan(
-                  text: "11002120 \n",
-                  style: TextStyle(
-                    color: AppColors.mainBlackColor,
-                    fontSize: Dimensions.font20
-                  ),
-                ),
-                TextSpan(
-                  text: "04H \n",
-                  style: TextStyle(
-                    color: AppColors.mainColor,
-                    fontSize: Dimensions.font20/2
-                  ),
-                ),
-              ]
-            ),
-          ),
-        ],
-      ),
-    );
-  }
